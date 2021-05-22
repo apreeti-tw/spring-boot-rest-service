@@ -22,18 +22,18 @@ public class SpringBootRestServiceApplication implements CommandLineRunner {
 	public void run(String[] args){
 
 		Library library = new Library();
-		library.setId("test004");
-		library.setBookName("TestBook4");
-		library.setIsbn("82738273976");
-		library.setAisle(8724);
-		library.setAuthor("Test2");
+		library.setId("test005");
+		library.setBookName("TestBook5");
+		library.setIsbn("ISBN82738273976");
+		library.setAisle(872487);
+		library.setAuthor("Test5");
 		libraryRepository.save(library);
 
 		for (Library book: libraryRepository.findAll()) {
 			System.out.println(book.getBookName());
 		}
 
-		Optional<Library> lib = libraryRepository.findById("test003");
+		Optional<Library> lib = libraryRepository.findById("test004");
 		System.out.println("----------> " + lib.get().getBookName());
 	}
 }

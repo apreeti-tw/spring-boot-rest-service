@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Configuration
-@Table(name="BookDetails")
+@Table(name="books")
 public class Library {
     @Column(name="book_name")
     private String bookName;
