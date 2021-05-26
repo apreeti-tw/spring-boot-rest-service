@@ -1,6 +1,7 @@
 package com.springbootfundamentals.springbootrestservice.controller;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Configuration
+@Component
 @Table(name="books")
 public class Library {
     @Column(name="book_name")
