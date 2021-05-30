@@ -1,6 +1,6 @@
 package com.springbootfundamentals.springbootrestservice.controller;
 
-import com.springbootfundamentals.springbootrestservice.repositories.LibraryRepository;
+import com.springbootfundamentals.springbootrestservice.repositories.ILibraryRepository;
 import com.springbootfundamentals.springbootrestservice.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 public class LibraryController {
     @Autowired
-    LibraryRepository libraryRepo;
+    ILibraryRepository libraryRepo;
 
     @Autowired
     AddBookResponse addBookResponse;

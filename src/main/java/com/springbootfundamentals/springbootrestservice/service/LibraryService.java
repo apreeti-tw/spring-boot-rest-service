@@ -1,7 +1,7 @@
 package com.springbootfundamentals.springbootrestservice.service;
 
 import com.springbootfundamentals.springbootrestservice.controller.Library;
-import com.springbootfundamentals.springbootrestservice.repositories.LibraryRepository;
+import com.springbootfundamentals.springbootrestservice.repositories.ILibraryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
 @Service
 public class LibraryService {
     @Autowired
-    LibraryRepository libraryRepo;
+    ILibraryRepository libraryRepo;
 
     public boolean checkDuplicateBook(String bookId){
         Optional<Library> library = libraryRepo.findById(bookId);
