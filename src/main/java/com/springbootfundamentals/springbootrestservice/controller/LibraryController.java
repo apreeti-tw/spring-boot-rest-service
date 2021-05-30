@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 public class LibraryController {
     @Autowired
@@ -55,11 +57,20 @@ public class LibraryController {
         }
     }
 
-    @GetMapping("/getBook/{bookId}")
-    public Library getBookImpl(@PathVariable String bookId) {
+    @GetMapping("/getBooks/{bookId}")
+    public Library getBooksByIdImpl(@PathVariable String bookId) {
         try {
             return libraryRepo.findById(bookId).get();
         } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/getBooks/author")
+    public List<Library> getBooksByAuthor(@RequestParam String name){
+        try {
+            return libraryRepo.findByAuthor(name);
+        } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
