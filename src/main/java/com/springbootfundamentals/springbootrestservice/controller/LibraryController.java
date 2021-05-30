@@ -22,9 +22,9 @@ public class LibraryController {
     @Autowired
     LibraryService libraryService;
 
-    @GetMapping("/listBook")
-    public String listBookImpl(@RequestParam String id) {
-        return "You have requested for Book with id: "+id;
+    @GetMapping("/getBooks")
+    public Iterable<Library> getAllBooksImpl() {
+        return libraryRepo.findAll();
     }
 
     @PostMapping("/addBook")
@@ -86,6 +86,16 @@ public class LibraryController {
             libraryRepo.save(existingBook);
 
             return new ResponseEntity<Library>(existingBook, HttpStatus.OK) ;
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/deleteBook/{bookId}")
+    public ResponseEntity<String> deleteBookImpl(@PathVariable String bookId){
+        try {
+            libraryRepo.deleteById(bookId);
+            return new ResponseEntity<>("Book is deleted!", HttpStatus.NO_CONTENT);
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
