@@ -67,9 +67,25 @@ public class LibraryController {
     }
 
     @GetMapping("/getBooks/author")
-    public List<Library> getBooksByAuthor(@RequestParam String name){
+    public List<Library> getBooksByAuthorImpl(@RequestParam String name){
         try {
             return libraryRepo.findByAuthor(name);
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/updateBook/{bookId}")
+    public ResponseEntity<Library> updateBookImpl(@PathVariable String bookId, @RequestBody Library library){
+        try {
+            Library existingBook = libraryRepo.findById(bookId).get();
+
+            existingBook.setAisle(library.getAisle());
+            existingBook.setBookName(library.getBookName());
+            existingBook.setAuthor(library.getAuthor());
+            libraryRepo.save(existingBook);
+
+            return new ResponseEntity<Library>(existingBook, HttpStatus.OK) ;
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
