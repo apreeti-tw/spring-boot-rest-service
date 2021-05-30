@@ -1,6 +1,7 @@
 package com.springbootfundamentals.springbootrestservice.controller;
 
 import com.springbootfundamentals.springbootrestservice.repositories.LibraryRepository;
+import com.springbootfundamentals.springbootrestservice.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,9 @@ public class LibraryController {
     @Autowired
     AddBookResponse addBookResponse;
 
+    @Autowired
+    LibraryService libraryService;
+
     @GetMapping("/listBook")
     public String listBookImpl(@RequestParam String id) {
         return "You have requested for Book with id: "+id;
@@ -22,22 +26,33 @@ public class LibraryController {
 
     @PostMapping("/addBook")
     public ResponseEntity<AddBookResponse> addBookImpl(@RequestBody Library library){
-        library.setId(library.getIsbn() + library.getAisle());
+        HttpHeaders httpHeaders = new HttpHeaders();
+        String bookId = libraryService.getId(library.getIsbn(), library.getAisle());
+
+        library.setId(bookId);
         library.setAuthor(library.getAuthor());
         library.setBookName(library.getBookName());
         library.setAisle(library.getAisle());
         library.setIsbn(library.getIsbn());
-        libraryRepo.save(library);
 
-        //Set message text
-        addBookResponse.setId(library.getIsbn() + library.getAisle());
-        addBookResponse.setMessage("Successfully added book!");
+        if(!libraryService.checkDuplicateBook(bookId)){
+            libraryRepo.save(library);
 
-        //Set headers
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("unique", library.getIsbn() + library.getAisle());
+            //Set message text
+            addBookResponse.setId(bookId);
+            addBookResponse.setMessage("Successfully added book!");
 
-        //Send response text
-        return new ResponseEntity<AddBookResponse>(addBookResponse, httpHeaders, HttpStatus.CREATED);
+            //Set headers
+            httpHeaders.add("unique", library.getIsbn() + library.getAisle());
+
+            //Send response text
+            return new ResponseEntity<AddBookResponse>(addBookResponse, httpHeaders, HttpStatus.CREATED);
+        } else {
+            System.out.println("duplicate found");
+            addBookResponse.setId(bookId);
+            addBookResponse.setMessage("Book already exists!");
+            return new ResponseEntity<AddBookResponse>(addBookResponse, HttpStatus.BAD_REQUEST);
+        }
+
     }
 }
