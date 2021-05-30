@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class LibraryController {
@@ -48,11 +49,18 @@ public class LibraryController {
             //Send response text
             return new ResponseEntity<AddBookResponse>(addBookResponse, httpHeaders, HttpStatus.CREATED);
         } else {
-            System.out.println("duplicate found");
             addBookResponse.setId(bookId);
             addBookResponse.setMessage("Book already exists!");
             return new ResponseEntity<AddBookResponse>(addBookResponse, HttpStatus.BAD_REQUEST);
         }
+    }
 
+    @GetMapping("/getBook/{bookId}")
+    public Library getBookImpl(@PathVariable(value = "bookId") String bookId) {
+        try {
+            return libraryRepo.findById(bookId).get();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 }
