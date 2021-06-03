@@ -2,6 +2,8 @@ package com.springbootfundamentals.springbootrestservice.controller;
 
 import com.springbootfundamentals.springbootrestservice.repositories.ILibraryRepository;
 import com.springbootfundamentals.springbootrestservice.service.LibraryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,8 +24,11 @@ public class LibraryController {
     @Autowired
     LibraryService libraryService;
 
+    private static final Logger logger = LoggerFactory.getLogger(LibraryController.class);
+
     @GetMapping("/getBooks")
     public Iterable<Library> getAllBooksImpl() {
+        logger.info("Fetching all books");
         return libraryRepo.findAll();
     }
 
@@ -39,11 +44,14 @@ public class LibraryController {
         library.setIsbn(library.getIsbn());
 
         if(!libraryService.checkDuplicateBook(bookId)){
+            logger.info("Creating new book "+library.getBookName());
+
             libraryRepo.save(library);
 
             //Set message text
             addBookResponse.setId(bookId);
             addBookResponse.setMessage("Successfully added book!");
+            logger.info("Successfully added book "+library.getBookName()+"!");
 
             //Set headers
             httpHeaders.add("unique", library.getIsbn() + library.getAisle());
@@ -51,6 +59,7 @@ public class LibraryController {
             //Send response text
             return new ResponseEntity<AddBookResponse>(addBookResponse, httpHeaders, HttpStatus.CREATED);
         } else {
+            logger.info("Book creation failed. Duplicate book entry "+library.getBookName());
             addBookResponse.setId(bookId);
             addBookResponse.setMessage("Book already exists!");
             return new ResponseEntity<AddBookResponse>(addBookResponse, HttpStatus.BAD_REQUEST);
@@ -60,8 +69,11 @@ public class LibraryController {
     @GetMapping("/getBooks/{bookId}")
     public Library getBooksByIdImpl(@PathVariable String bookId) {
         try {
-            return libraryRepo.findById(bookId).get();
+            Library library = libraryRepo.findById(bookId).get();
+            logger.info("Found book "+library.getBookName());
+            return library;
         } catch (Exception e) {
+            logger.info("Requested book not found"+e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -69,8 +81,10 @@ public class LibraryController {
     @GetMapping("/getBooks/author")
     public List<Library> getBooksByAuthorImpl(@RequestParam String name){
         try {
+            logger.info("Fetching all books by "+name);
             return libraryRepo.findByAuthor(name);
         } catch (Exception e){
+            logger.info("Error fetching books by "+name+" - "+e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -84,9 +98,11 @@ public class LibraryController {
             existingBook.setBookName(library.getBookName());
             existingBook.setAuthor(library.getAuthor());
             libraryRepo.save(existingBook);
+            logger.info("Book updated successfully "+existingBook.getBookName());
 
             return new ResponseEntity<Library>(existingBook, HttpStatus.OK) ;
         } catch (Exception e){
+            logger.info("Error updating book"+e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -95,8 +111,10 @@ public class LibraryController {
     public ResponseEntity<String> deleteBookImpl(@PathVariable String bookId){
         try {
             libraryRepo.deleteById(bookId);
+            logger.info("Book deleted successfully");
             return new ResponseEntity<>("Book is deleted!", HttpStatus.NO_CONTENT);
         } catch (Exception e){
+            logger.info("Error deleting book "+e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
