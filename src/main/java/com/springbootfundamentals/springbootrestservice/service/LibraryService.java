@@ -20,6 +20,8 @@ public class LibraryService {
     }
 
     public String getId(String isbn, int aisle){
+        if (isbn.contains("Z"))
+            return "OLD"+isbn+aisle;
         return isbn+aisle;
     }
 }
