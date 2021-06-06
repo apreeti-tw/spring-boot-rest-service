@@ -65,7 +65,10 @@ class SpringBootRestServiceApplicationTests {
 		when(libService.checkDuplicateBook(bookDetails.getId())).thenReturn(true);
 
 		ResponseEntity responseEntity = libraryController.addBookImpl(bookDetails);
+		AddBookResponse addBookResponse = (AddBookResponse) responseEntity.getBody();
 		Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
+		Assertions.assertEquals(addBookResponse.getId(), bookDetails.getId());
+		Assertions.assertEquals(addBookResponse.getMessage(), "Book already exists!");
 	}
 
 	public Library buildLibraryBook(){
