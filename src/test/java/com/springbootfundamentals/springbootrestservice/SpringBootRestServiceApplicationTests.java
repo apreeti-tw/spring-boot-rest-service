@@ -1,5 +1,6 @@
 package com.springbootfundamentals.springbootrestservice;
 
+import com.springbootfundamentals.springbootrestservice.controller.AddBookResponse;
 import com.springbootfundamentals.springbootrestservice.controller.Library;
 import com.springbootfundamentals.springbootrestservice.controller.LibraryController;
 import com.springbootfundamentals.springbootrestservice.repositories.ILibraryRepository;
@@ -51,7 +52,10 @@ class SpringBootRestServiceApplicationTests {
 		when(libService.checkDuplicateBook(bookDetails.getId())).thenReturn(false);
 
 		ResponseEntity responseEntity = libraryController.addBookImpl(bookDetails);
+		AddBookResponse addBookResponse = (AddBookResponse) responseEntity.getBody();
 		Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.CREATED);
+		Assertions.assertEquals(addBookResponse.getId(), bookDetails.getId());
+		Assertions.assertEquals(addBookResponse.getMessage(), "Successfully added book!");
 	}
 
 	@Test
