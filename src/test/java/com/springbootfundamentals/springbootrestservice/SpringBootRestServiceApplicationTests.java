@@ -54,6 +54,16 @@ class SpringBootRestServiceApplicationTests {
 		Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.CREATED);
 	}
 
+	@Test
+	public void testAddBookWhenBookIdAlreadyExists(){
+		Library bookDetails = buildLibraryBook();
+		when(libService.getId(bookDetails.getIsbn(), bookDetails.getAisle())).thenReturn(bookDetails.getId());
+		when(libService.checkDuplicateBook(bookDetails.getId())).thenReturn(true);
+
+		ResponseEntity responseEntity = libraryController.addBookImpl(bookDetails);
+		Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
+	}
+
 	public Library buildLibraryBook(){
 		Library bookDetails = new Library();
 		bookDetails.setBookName("Unit Testing Book");

@@ -62,7 +62,7 @@ public class LibraryController {
             logger.info("Book creation failed. Duplicate book entry "+library.getBookName());
             addBookResponse.setId(bookId);
             addBookResponse.setMessage("Book already exists!");
-            return new ResponseEntity<AddBookResponse>(addBookResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<AddBookResponse>(addBookResponse, HttpStatus.CONFLICT);
         }
     }
 
