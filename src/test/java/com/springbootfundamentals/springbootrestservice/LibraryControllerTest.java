@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -40,7 +41,9 @@ public class LibraryControllerTest {
         this.mockMvc.perform(post("/addBook")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(bookDetails)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(bookDetails.getId()))
+                .andExpect(jsonPath("$.message").value("Successfully added book!"));
     }
 
     @Test
@@ -53,7 +56,9 @@ public class LibraryControllerTest {
         this.mockMvc.perform(post("/addBook")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(bookDetails)))
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.id").value(bookDetails.getId()))
+                .andExpect(jsonPath("$.message").value("Book already exists!"));;
     }
 
     public Library buildLibraryBook(){
