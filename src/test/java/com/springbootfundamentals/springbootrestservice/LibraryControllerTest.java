@@ -13,7 +13,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,6 +63,28 @@ public class LibraryControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.id").value(bookDetails.getId()))
                 .andExpect(jsonPath("$.message").value("Book already exists!"));;
+    }
+
+    @Test
+    public void getBookByAuthorControllerTest() throws Exception {
+        Library bookDetails1 = buildLibraryBook();
+        Library bookDetails2 = buildLibraryBook();
+        List<Library> books = new ArrayList<>();
+        books.add(bookDetails1);
+        books.add(bookDetails2);
+        Mockito.when(libraryRepo.findByAuthor(any())).thenReturn(books);
+
+        for (int i=0; i< books.size(); i++) {
+            this.mockMvc.perform(get("/getBooks/author")
+                    .param("name", "Unit Test")
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.["+i+"].id").value(books.get(i).getId()))
+                    .andExpect(jsonPath("$.["+i+"]bookName").value(books.get(i).getBookName()))
+                    .andExpect(jsonPath("$.["+i+"]author").value(books.get(i).getAuthor()))
+                    .andExpect(jsonPath("$.["+i+"]isbn").value(books.get(i).getIsbn()))
+                    .andExpect(jsonPath("$.["+i+"]aisle").value(books.get(i).getAisle()));
+        }
     }
 
     public Library buildLibraryBook(){
