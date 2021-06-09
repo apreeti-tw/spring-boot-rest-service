@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +21,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -122,6 +123,34 @@ public class LibraryControllerTest {
                     .andExpect(jsonPath("$.["+i+"].isbn").value(books.get(i).getIsbn()))
                     .andExpect(jsonPath("$.["+i+"].aisle").value(books.get(i).getAisle()));
         }
+    }
+
+    @Test
+    public void getBookByIdDoesNotExistControllerTest() throws Exception {
+        Mockito.when(libraryService.getBookById(any())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        this.mockMvc.perform(get("/getBooks/someRandomBookId"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void updateBookByIdControllerTest(){
+
+    }
+
+    @Test
+    public void updateBookByIdDoesNotExistControllerTest(){
+
+    }
+
+    @Test
+    public void deleteBookByIdControllerTest(){
+
+    }
+
+    @Test
+    public void deleteBookByIdDoesNotExistControllerTest(){
+
     }
 
     public Library buildLibraryBook(){
