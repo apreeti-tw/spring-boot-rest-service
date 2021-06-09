@@ -24,4 +24,8 @@ public class LibraryService {
             return "OLD"+isbn+aisle;
         return isbn+aisle;
     }
+
+    public Library getBookById(String id){
+        return libraryRepo.findById(id).get();
+    }
 }

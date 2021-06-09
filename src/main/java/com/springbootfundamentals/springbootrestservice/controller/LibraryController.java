@@ -69,7 +69,7 @@ public class LibraryController {
     @GetMapping("/getBooks/{bookId}")
     public Library getBooksByIdImpl(@PathVariable String bookId) {
         try {
-            Library library = libraryRepo.findById(bookId).get();
+            Library library = libraryService.getBookById(bookId);
             logger.info("Found book "+library.getBookName());
             return library;
         } catch (Exception e) {

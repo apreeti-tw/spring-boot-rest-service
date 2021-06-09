@@ -80,11 +80,25 @@ public class LibraryControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.["+i+"].id").value(books.get(i).getId()))
-                    .andExpect(jsonPath("$.["+i+"]bookName").value(books.get(i).getBookName()))
-                    .andExpect(jsonPath("$.["+i+"]author").value(books.get(i).getAuthor()))
-                    .andExpect(jsonPath("$.["+i+"]isbn").value(books.get(i).getIsbn()))
-                    .andExpect(jsonPath("$.["+i+"]aisle").value(books.get(i).getAisle()));
+                    .andExpect(jsonPath("$.["+i+"].bookName").value(books.get(i).getBookName()))
+                    .andExpect(jsonPath("$.["+i+"].author").value(books.get(i).getAuthor()))
+                    .andExpect(jsonPath("$.["+i+"].isbn").value(books.get(i).getIsbn()))
+                    .andExpect(jsonPath("$.["+i+"].aisle").value(books.get(i).getAisle()));
         }
+    }
+
+    @Test
+    public void getBookByIdControllerTest() throws Exception {
+        Library bookDetails = buildLibraryBook();
+        Mockito.when(libraryService.getBookById(any())).thenReturn(bookDetails);
+
+        this.mockMvc.perform(get("/getBooks/"+bookDetails.getId()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(bookDetails.getId()))
+                .andExpect(jsonPath("$.bookName").value(bookDetails.getBookName()))
+                .andExpect(jsonPath("$.author").value(bookDetails.getAuthor()))
+                .andExpect(jsonPath("$.isbn").value(bookDetails.getIsbn()))
+                .andExpect(jsonPath("$.aisle").value(bookDetails.getAisle()));
     }
 
     public Library buildLibraryBook(){
