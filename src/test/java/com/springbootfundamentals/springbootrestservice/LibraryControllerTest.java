@@ -79,6 +79,7 @@ public class LibraryControllerTest {
                     .param("name", "Unit Test")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(2))
                     .andExpect(jsonPath("$.["+i+"].id").value(books.get(i).getId()))
                     .andExpect(jsonPath("$.["+i+"].bookName").value(books.get(i).getBookName()))
                     .andExpect(jsonPath("$.["+i+"].author").value(books.get(i).getAuthor()))
@@ -99,6 +100,28 @@ public class LibraryControllerTest {
                 .andExpect(jsonPath("$.author").value(bookDetails.getAuthor()))
                 .andExpect(jsonPath("$.isbn").value(bookDetails.getIsbn()))
                 .andExpect(jsonPath("$.aisle").value(bookDetails.getAisle()));
+    }
+
+    @Test
+    public void getAllBooksControllerTest() throws Exception {
+        List<Library> books = new ArrayList<>();
+        books.add(buildLibraryBook());
+        books.add(buildLibraryBook());
+        books.add(buildLibraryBook());
+        books.add(buildLibraryBook());
+        Mockito.when(libraryRepo.findAll()).thenReturn(books);
+
+        for (int i=0; i< books.size(); i++) {
+            this.mockMvc.perform(get("/getBooks")
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(4))
+                    .andExpect(jsonPath("$.["+i+"].id").value(books.get(i).getId()))
+                    .andExpect(jsonPath("$.["+i+"].bookName").value(books.get(i).getBookName()))
+                    .andExpect(jsonPath("$.["+i+"].author").value(books.get(i).getAuthor()))
+                    .andExpect(jsonPath("$.["+i+"].isbn").value(books.get(i).getIsbn()))
+                    .andExpect(jsonPath("$.["+i+"].aisle").value(books.get(i).getAisle()));
+        }
     }
 
     public Library buildLibraryBook(){
