@@ -155,8 +155,11 @@ public class LibraryControllerTest {
     }
 
     @Test
-    public void deleteBookByIdControllerTest(){
+    public void deleteBookByIdControllerTest() throws Exception {
+        Mockito.doNothing().when(libraryRepo).deleteById(any());
 
+        this.mockMvc.perform(delete("/deleteBook/ISBN62245"))
+                .andExpect(status().isNoContent());
     }
 
 
