@@ -131,9 +131,6 @@ public class LibraryControllerTest {
 
         this.mockMvc.perform(get("/getBooks/someRandomBookId"))
                 .andExpect(status().isNotFound());
-
-        this.mockMvc.perform(get("/deleteBook/someRandomBookId"))
-                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -162,6 +159,13 @@ public class LibraryControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    @Test
+    public void deleteBookByIdDoesNotExistControllerTest() throws Exception {
+        Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND)).when(libraryRepo).deleteById(any());
+
+        this.mockMvc.perform(delete("/deleteBook/someRandomId"))
+                .andExpect(status().isNotFound());
+    }
 
     public Library buildLibraryBook(){
         Library bookDetails = new Library();
