@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -138,8 +137,21 @@ public class LibraryControllerTest {
     }
 
     @Test
-    public void updateBookByIdControllerTest(){
+    public void updateBookByIdControllerTest() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Library bookDetails = buildLibraryBook();
+        String bookId = bookDetails.getId();
+        Mockito.when(libraryService.getBookById(any())).thenReturn(bookDetails);
 
+        bookDetails.setAuthor("Dummy Unit Test");
+        bookDetails.setBookName("Dummy Unit Testing Book");
+        bookDetails.setIsbn("DUMMYISBN7");
+        bookDetails.setAisle(54321);
+        bookDetails.setId(bookDetails.getIsbn()+bookDetails.getAisle());
+
+        this.mockMvc.perform(put("/updateBook/"+bookId).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(bookDetails)))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"bookName\":\"Dummy Unit Testing Book\",\"id\":\"DUMMYISBN754321\",\"isbn\":\"DUMMYISBN7\",\"aisle\":54321,\"author\":\"Dummy Unit Test\"}"));
     }
 
     @Test
