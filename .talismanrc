@@ -7,7 +7,8 @@ fileignoreconfig:
   ignore_detectors: []
 fileignoreconfig:
 - filename: src/main/resources/data.sql
-  checksum: f727f6143af003434e9e97752220b82c9a7aed5461198ed907168bfc3016a5fb
+  checksum: 16712c44e33f32679ed021af65c5d9d39fe5bd00d3abb0c61f46cb3b8d8ff51b
   ignore_detectors: []
 scopeconfig: []
+
 
