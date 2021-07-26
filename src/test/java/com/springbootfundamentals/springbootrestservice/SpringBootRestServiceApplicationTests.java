@@ -17,8 +17,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class SpringBootRestServiceApplicationTests {
-	@Autowired
-	LibraryService libraryService;
+	LibraryService libraryService = new LibraryService();
 
 	@Autowired
 	LibraryController libraryController;
