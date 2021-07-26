@@ -167,6 +167,12 @@ public class LibraryControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    public void actuatorEndpointTest() throws Exception {
+        this.mockMvc.perform(get("/actuator/info"))
+                .andExpect(status().isOk());
+    }
+
     public Library buildLibraryBook(){
         Library bookDetails = new Library();
         bookDetails.setBookName("Unit Testing Book");

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: library-service-starter
+spec:
+  containers:
+    - name: library-service-pod
+      image: ajgpreeti/spring-boot:latest
+      ports:
+      - containerPort: 8080

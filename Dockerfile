@@ -1,4 +1,4 @@
 FROM openjdk:8-jdk-alpine
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+COPY target/spring-boot-rest-service-0.0.1-SNAPSHOT.jar library-service.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","library-service.jar"]
