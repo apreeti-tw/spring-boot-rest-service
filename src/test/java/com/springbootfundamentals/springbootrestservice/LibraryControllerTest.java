@@ -1,9 +1,12 @@
 package com.springbootfundamentals.springbootrestservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springbootfundamentals.springbootrestservice.controller.AddBookResponse;
 import com.springbootfundamentals.springbootrestservice.controller.Library;
+import com.springbootfundamentals.springbootrestservice.controller.LibraryController;
 import com.springbootfundamentals.springbootrestservice.repositories.ILibraryRepository;
 import com.springbootfundamentals.springbootrestservice.service.LibraryService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,12 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class LibraryControllerTest {
+    @Autowired
+    LibraryController libraryController;
+
     @MockBean
     LibraryService libraryService;
 
@@ -165,6 +173,32 @@ public class LibraryControllerTest {
 
         this.mockMvc.perform(delete("/deleteBook/someRandomId"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testAddBookWhenBookIdDoesNotExist(){
+        Library bookDetails = buildLibraryBook();
+        when(libraryService.getId(bookDetails.getIsbn(), bookDetails.getAisle())).thenReturn(bookDetails.getId());
+        when(libraryService.checkDuplicateBook(bookDetails.getId())).thenReturn(false);
+
+        ResponseEntity responseEntity = libraryController.addBookImpl(bookDetails);
+        AddBookResponse addBookResponse = (AddBookResponse) responseEntity.getBody();
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.CREATED);
+        Assertions.assertEquals(addBookResponse.getId(), bookDetails.getId());
+        Assertions.assertEquals(addBookResponse.getMessage(), "Successfully added book!");
+    }
+
+    @Test
+    public void testAddBookWhenBookIdAlreadyExists(){
+        Library bookDetails = buildLibraryBook();
+        when(libraryService.getId(bookDetails.getIsbn(), bookDetails.getAisle())).thenReturn(bookDetails.getId());
+        when(libraryService.checkDuplicateBook(bookDetails.getId())).thenReturn(true);
+
+        ResponseEntity responseEntity = libraryController.addBookImpl(bookDetails);
+        AddBookResponse addBookResponse = (AddBookResponse) responseEntity.getBody();
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
+        Assertions.assertEquals(addBookResponse.getId(), bookDetails.getId());
+        Assertions.assertEquals(addBookResponse.getMessage(), "Book already exists!");
     }
 
     @Test
