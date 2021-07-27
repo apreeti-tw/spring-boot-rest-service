@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: library-rs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: library-pod
+  template:
+    metadata:
+      labels:
+        app: library-pod
+    spec:
+      containers:
+        - name: library
+          image: ajgpreeti/spring-boot
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/info
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5
