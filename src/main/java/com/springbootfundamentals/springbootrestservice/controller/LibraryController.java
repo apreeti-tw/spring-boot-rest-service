@@ -118,10 +118,4 @@ public class LibraryController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
-
-    @GetMapping("/actuator/info")
-    public ResponseEntity<String> actuatorInfoImpl(){
-        logger.info("Hitting actuator info endpoint");
-        return new ResponseEntity<>("You have hit the actuator endpoint. Status: UP", HttpStatus.OK);
-    }
 }
